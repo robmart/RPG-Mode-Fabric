@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/RPG-Mode-Creatures" />
+            <option value="$PROJECT_DIR$/RPG-Mode-Effects" />
           </set>
         </option>
       </GradleProjectSettings>
