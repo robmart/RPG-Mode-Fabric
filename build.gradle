@@ -22,6 +22,8 @@ repositories {
 version = project.mod_version
 group = project.maven_group
 
+import org.apache.commons.codec.digest.DigestUtils
+
 def getSubprojectVersion(project, version) {
     if (grgit == null) {
         return version + "+nogit"
@@ -33,7 +35,7 @@ def getSubprojectVersion(project, version) {
         return version + "+uncommited"
     }
 
-    return version + "+" + latestCommits.get(0).id.substring(0, 8) + DigestUtils.sha256Hex(Globals.mcVersion).substring(0, 2)
+    return version + "+" + latestCommits.get(0).id.substring(0, 8) + DigestUtils.sha256Hex(project.minecraft_version).substring(0, 2)
 }
 
 def moduleDependencies(project, List<String> depNames) {
