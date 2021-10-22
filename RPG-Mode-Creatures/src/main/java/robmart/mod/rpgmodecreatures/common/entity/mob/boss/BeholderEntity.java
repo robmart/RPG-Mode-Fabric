@@ -153,7 +153,7 @@ public class BeholderEntity extends HostileEntity implements Monster, IAnimatabl
     public void attack(LivingEntity target, float pullProgress) {
         Random random = this.random;
         int eye = random.nextInt(10) + 1;
-        shootBeamAt(10, target);
+        shootBeamAt(8, target);
     }
 
     private void shootBeamAt(int eyeIndex, LivingEntity target) {

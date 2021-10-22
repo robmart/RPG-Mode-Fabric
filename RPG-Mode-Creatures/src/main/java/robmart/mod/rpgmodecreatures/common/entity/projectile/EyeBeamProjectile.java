@@ -26,6 +26,7 @@ import net.minecraft.world.explosion.Explosion;
 import robmart.mod.rpgmodecreatures.common.RPGModeCreatures;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
+import robmart.mod.rpgmodeeffects.common.entity.effect.RPGStatusEffects;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
@@ -161,6 +162,15 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 entities.forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.setVelocity(0, 1.5, 0);
+                });
+                break;
+            case 8: //Petrification
+                if (this.world.isClient) return;
+                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                int finalI2 = i;
+                entities.forEach(entity -> {
+                    LivingEntity livingEntity = (LivingEntity) entity;
+                    livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI2 / 4, 1), this.getEffectCause());
                 });
                 break;
             case 10: //Death ray
