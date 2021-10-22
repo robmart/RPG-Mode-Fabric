@@ -1,2 +1,0 @@
-v1	named	intermediary
-METHOD	robmart/mod/rpgmodecreatures/common/mixin/SpawnRestrictionMixin	(Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/SpawnRestriction$Location;Lnet/minecraft/world/Heightmap$Type;Lnet/minecraft/entity/SpawnRestriction$SpawnPredicate;)V	register	method_20637
