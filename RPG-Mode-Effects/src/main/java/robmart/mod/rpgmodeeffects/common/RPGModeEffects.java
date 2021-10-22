@@ -12,7 +12,6 @@ public class RPGModeEffects implements ModInitializer {
 
         LivingEntityEvents.JUMPING_EVENT.register((entity -> {
             if (entity.hasStatusEffect(RPGStatusEffects.PETRIFICATION)) {
-                System.out.println("Petrification");
                 return ActionResult.FAIL;
             }
 

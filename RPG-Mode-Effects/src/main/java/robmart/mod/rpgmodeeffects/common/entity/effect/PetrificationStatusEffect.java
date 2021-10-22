@@ -23,14 +23,6 @@ public class PetrificationStatusEffect extends StatusEffect {
     }
 
     @Override
-    public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-        super.applyUpdateEffect(entity, amplifier);
-        if (entity instanceof PlayerEntity) {
-            ((PlayerEntity) entity).addExperience(1 << amplifier); // Higher amplifier gives you EXP faster
-        }
-    }
-
-    @Override
     public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
         for (Map.Entry<EntityAttribute, EntityAttributeModifier> entityAttributeEntityAttributeModifierEntry : getAttributeModifiers().entrySet()) {
             EntityAttributeInstance entityAttributeInstance = attributes.getCustomInstance((EntityAttribute) ((Map.Entry) entityAttributeEntityAttributeModifierEntry).getKey());
