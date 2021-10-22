@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "rpgmode-creatures",
-  "version": "1.0.0+82b8f1b518",
-  "name": "Rpgmode Creatures",
+  "version": "1.0.0+d9e469a818",
+  "name": "RPGMode Creatures",
   "description": "",
   "authors": [],
   "contact": {},
@@ -24,5 +24,10 @@
     "fabricloader": ">=0.11.6",
     "fabric": "*",
     "minecraft": "1.17.1"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "rpgmode"
+    }
   }
 }
