@@ -2,6 +2,10 @@ version = getSubprojectVersion(project, "1.0.0")
 group = project.maven_group
 archivesBaseName = "rpgmodecreatures"
 
+moduleDependencies(project, [
+        'RPG-Mode-Effects'
+])
+
 repositories {
     maven {
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
