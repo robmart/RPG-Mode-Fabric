@@ -3,9 +3,11 @@ group = project.maven_group
 archivesBaseName = "rpgmodecreatures"
 
 repositories {
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven {
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
 }
 
 dependencies {
-    include modImplementation('software.bernie.geckolib:geckolib-fabric-1.17:3.0.13:dev')
+    modImplementation('software.bernie.geckolib:geckolib-fabric-1.17:3.0.13:dev')
 }

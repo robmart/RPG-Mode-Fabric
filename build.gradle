@@ -17,6 +17,9 @@ repositories {
         name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/releases"
     }
+    maven {
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
 }
 
 version = project.mod_version
@@ -68,7 +71,6 @@ allprojects {
         maven {
             url = "https://www.cursemaven.com"
         }
-        maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     }
 
 
@@ -168,6 +170,21 @@ allprojects {
 }
 
 subprojects {
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                afterEvaluate {
+                    artifact(remapJar) {
+                        builtBy remapJar
+                    }
+
+                    artifact(sourcesJar) {
+                        builtBy remapSourcesJar
+                    }
+                }
+            }
+        }
+    }
     javadoc.enabled = false
 }
 
@@ -181,7 +198,7 @@ def devOnlyModules = [
 
 dependencies {
     modImplementation "com.terraformersmc:modmenu:2.0.9"
-    include modImplementation('software.bernie.geckolib:geckolib-fabric-1.17:3.0.13:dev')
+    modImplementation('software.bernie.geckolib:geckolib-fabric-1.17:3.0.13:dev')
 
     afterEvaluate {
         subprojects.each {

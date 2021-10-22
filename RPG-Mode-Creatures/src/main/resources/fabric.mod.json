@@ -23,7 +23,8 @@
   "depends": {
     "fabricloader": ">=0.11.6",
     "fabric": "*",
-    "minecraft": "1.17.1"
+    "minecraft": "1.17.1",
+    "geckolib3": ">=3.0.13"
   },
   "custom": {
     "modmenu": {
