@@ -15,7 +15,7 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeKeys;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
-import robmart.mod.rpgmodecreatures.common.entity.RPGModeEntityGroup;
+import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -91,7 +91,7 @@ public class RatEntity extends HostileEntity implements IAnimatable, IVariants<S
 
     @Override
     public EntityGroup getGroup() {
-        return RPGModeEntityGroup.BEAST;
+        return RPGEntityGroup.BEAST;
     }
 
     @Override

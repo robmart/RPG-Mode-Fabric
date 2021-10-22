@@ -1,7 +1,6 @@
 package robmart.mod.rpgmodecreatures.common.entity.mob.boss;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.control.BodyControl;
@@ -16,13 +15,11 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldEvents;
-import robmart.mod.rpgmodecreatures.common.RPGModeCreatures;
-import robmart.mod.rpgmodecreatures.common.entity.RPGModeEntityGroup;
+import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
 import robmart.mod.rpgmodecreatures.common.entity.ai.goal.FollowTargetHeightGoal;
 import robmart.mod.rpgmodecreatures.common.entity.projectile.EyeBeamProjectile;
 import robmart.mod.rpgmodecreatures.common.helper.RPGMathHelper;
@@ -135,7 +132,7 @@ public class BeholderEntity extends HostileEntity implements Monster, IAnimatabl
     }
 
     public EntityGroup getGroup() {
-        return RPGModeEntityGroup.ABERRATION;
+        return RPGEntityGroup.ABERRATION;
     }
 
     protected boolean canStartRiding(Entity entity) {

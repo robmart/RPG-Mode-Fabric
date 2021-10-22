@@ -2,7 +2,7 @@ package robmart.mod.rpgmodecreatures.client.render.entity.model;
 
 import net.minecraft.util.Identifier;
 import robmart.mod.rpgmodecreatures.common.entity.mob.boss.BeholderEntity;
-import robmart.mod.rpgmodecreatures.common.reference.Reference;
+import robmart.mod.rpgmodecore.common.reference.Reference;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class BeholderEntityModel extends AnimatedGeoModel<BeholderEntity> {

@@ -7,7 +7,3 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
-include('RPG-Mode-Core')
-include('RPG-Mode-Creatures')
-include('RPG-Mode-Effects')

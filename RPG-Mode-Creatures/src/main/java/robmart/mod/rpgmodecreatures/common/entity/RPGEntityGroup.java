@@ -2,7 +2,7 @@ package robmart.mod.rpgmodecreatures.common.entity;
 
 import net.minecraft.entity.EntityGroup;
 
-public class RPGModeEntityGroup { //TODO: Change group of vanilla stuff
+public class RPGEntityGroup { //TODO: Change group of vanilla stuff
     public static final MetaEntityGroup ABERRATION = new MetaEntityGroup();
     public static final EntityGroup FEY = new EntityGroup();
     public static final MetaEntityGroup ELEMENTAL = new MetaEntityGroup();

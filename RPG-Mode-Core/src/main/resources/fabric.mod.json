@@ -1,28 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "rpgmode-effects",
+  "id": "rpgmode-core",
   "version": "${version}",
-  "name": "RPGMode Effects",
+  "name": "RPGMode Core",
   "description": "",
   "authors": [],
   "contact": {},
   "license": "LGPL-3.0",
   "icon": "assets/rpgmode/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "client": [
-      "robmart.mod.rpgmodeeffects.client.RPGModeEffectsClient"
-    ],
-    "main": [
-      "robmart.mod.rpgmodeeffects.common.RPGModeEffects"
-    ]
-  },
   "depends": {
     "fabricloader": ">=0.11.6",
     "fabric": "*",
-    "minecraft": "1.17.1",
-    "rpgmode-core": "*"
+    "minecraft": "1.17.1"
   },
+  "entrypoints": {
+    "client": [
+      "robmart.mod.rpgmodecore.client.RPGModeCoreClient"
+    ],
+    "main": [
+      "robmart.mod.rpgmodecore.common.RPGModeCore"
+    ]
+  },
+  "mixins": [
+    "rpgmode-core.mixins.json"
+  ],
   "custom": {
     "modmenu": {
       "parent": "rpgmode"

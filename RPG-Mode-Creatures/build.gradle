@@ -3,6 +3,7 @@ group = project.maven_group
 archivesBaseName = "rpgmodecreatures"
 
 moduleDependencies(project, [
+        'RPG-Mode-Core',
         'RPG-Mode-Effects'
 ])
 

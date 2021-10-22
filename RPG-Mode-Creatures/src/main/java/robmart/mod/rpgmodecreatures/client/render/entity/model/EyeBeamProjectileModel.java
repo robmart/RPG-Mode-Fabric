@@ -2,7 +2,7 @@ package robmart.mod.rpgmodecreatures.client.render.entity.model;
 
 import net.minecraft.util.Identifier;
 import robmart.mod.rpgmodecreatures.common.entity.projectile.EyeBeamProjectile;
-import robmart.mod.rpgmodecreatures.common.reference.Reference;
+import robmart.mod.rpgmodecore.common.reference.Reference;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class EyeBeamProjectileModel extends AnimatedGeoModel<EyeBeamProjectile> {

@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
-import robmart.mod.rpgmodecreatures.common.reference.Reference;
+import robmart.mod.rpgmodecore.common.reference.Reference;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;

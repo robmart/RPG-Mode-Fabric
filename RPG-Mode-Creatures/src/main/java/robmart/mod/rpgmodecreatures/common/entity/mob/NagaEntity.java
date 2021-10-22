@@ -19,7 +19,6 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -33,13 +32,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.*;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import org.jetbrains.annotations.Nullable;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
-import robmart.mod.rpgmodecreatures.common.entity.RPGModeEntityGroup;
+import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -125,7 +122,7 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
 
     @Override
     public EntityGroup getGroup() {
-        return RPGModeEntityGroup.WATER;
+        return RPGEntityGroup.WATER;
     }
 
     public EntityDimensions getDimensions(EntityPose pose) {
