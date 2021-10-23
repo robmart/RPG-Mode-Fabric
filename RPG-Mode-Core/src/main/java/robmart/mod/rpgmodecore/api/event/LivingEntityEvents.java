@@ -3,9 +3,8 @@ package robmart.mod.rpgmodecore.api.event;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 public class LivingEntityEvents {
@@ -14,6 +13,19 @@ public class LivingEntityEvents {
             (listeners) -> (player) -> {
                 for (Jump listener : listeners) {
                     ActionResult result = listener.onJump(player);
+
+                    if(result != ActionResult.PASS) {
+                        return result;
+                    }
+                }
+
+                return ActionResult.PASS;
+            });
+
+    public static final Event<Damage> DAMAGE_EVENT = EventFactory.createArrayBacked(Damage.class,
+            (listeners) -> (receiver, source, amount) -> {
+                for (Damage listener : listeners) {
+                    ActionResult result = listener.onDamage(receiver, source, amount);
 
                     if(result != ActionResult.PASS) {
                         return result;
@@ -37,5 +49,14 @@ public class LivingEntityEvents {
          */
         @Nullable
         ActionResult onJump(LivingEntity entity);
+    }
+
+    @FunctionalInterface
+    public interface Damage {
+        /**
+         * @see LivingEntity#applyDamage(DamageSource, float)
+         */
+        @Nullable
+        ActionResult onDamage(LivingEntity receiver, DamageSource source, float amount);
     }
 }
