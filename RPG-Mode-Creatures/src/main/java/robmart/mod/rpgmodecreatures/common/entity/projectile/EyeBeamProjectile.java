@@ -2,6 +2,7 @@ package robmart.mod.rpgmodecreatures.common.entity.projectile;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -10,15 +11,8 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
-import net.minecraft.potion.Potion;
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
@@ -34,6 +28,8 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.List;
+import java.util.Random;
+import java.util.function.Consumer;
 
 public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAnimatable, IVariants<Integer> {
     public static final TrackedData<Integer> VARIANT = DataTracker.registerData(NagaEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -181,6 +177,40 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 entities.forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI3 / 4, 1), this.getEffectCause());
+                });
+                break;
+            case 9: //Disintegration
+                if (this.world.isClient) return;
+                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                entities.forEach(entity -> {
+                    LivingEntity livingEntity = (LivingEntity) entity;
+                    Random random = livingEntity.getRandom();
+                    int randomNum = random.nextInt(4) + 1;
+
+                    switch (randomNum) {
+                        case 1:
+                            if (livingEntity.hasStackEquipped(EquipmentSlot.HEAD)) {
+                                livingEntity.getEquippedStack(EquipmentSlot.HEAD).damage(livingEntity.getEquippedStack(EquipmentSlot.HEAD).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.HEAD));
+                            }
+                            break;
+                        case 2:
+                            if (livingEntity.hasStackEquipped(EquipmentSlot.CHEST)) {
+                                livingEntity.getEquippedStack(EquipmentSlot.CHEST).damage(livingEntity.getEquippedStack(EquipmentSlot.CHEST).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.CHEST));
+                            }
+                            break;
+                        case 3:
+                            if (livingEntity.hasStackEquipped(EquipmentSlot.LEGS)) {
+                                livingEntity.getEquippedStack(EquipmentSlot.LEGS).damage(livingEntity.getEquippedStack(EquipmentSlot.LEGS).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.LEGS));
+                            }
+                            break;
+                        case 4:
+                            if (livingEntity.hasStackEquipped(EquipmentSlot.FEET)) {
+                                livingEntity.getEquippedStack(EquipmentSlot.FEET).damage(livingEntity.getEquippedStack(EquipmentSlot.FEET).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.FEET));
+                            }
+                            break;
+                    }
+
+                    livingEntity.damage(DamageSource.MAGIC, 10F);
                 });
                 break;
             case 10: //Death ray
