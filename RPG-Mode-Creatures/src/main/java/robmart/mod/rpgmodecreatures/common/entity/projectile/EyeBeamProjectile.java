@@ -139,6 +139,8 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 int finalI = i;
                 entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.CHARM, 20 * finalI / 2), this.getEffectCause());
                 });
@@ -148,6 +150,8 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 int finalI1 = i;
                 entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 20 * finalI1 / 2 , 2), this.getEffectCause());
                 });
@@ -157,6 +161,8 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 int finalI2 = i;
                 entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.damage(DamageSource.MAGIC, 5.0F);
                     livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI2, 1), this.getEffectCause());
@@ -166,6 +172,8 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
             case 6: //Yeet
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.setVelocity(0, 1.5, 0);
                 });
@@ -175,6 +183,8 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 int finalI3 = i;
                 entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI3 / 4, 1), this.getEffectCause());
                 });
@@ -183,6 +193,8 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
                     LivingEntity livingEntity = (LivingEntity) entity;
                     Random random = livingEntity.getRandom();
                     int randomNum = random.nextInt(4) + 1;
@@ -217,6 +229,8 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.damage(DamageSource.MAGIC, 15.0F);
                 });
