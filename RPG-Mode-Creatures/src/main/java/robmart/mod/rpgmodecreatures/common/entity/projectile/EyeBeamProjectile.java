@@ -10,8 +10,10 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.potion.Potion;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -133,27 +135,35 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
             i = 40;
         }
 
-
         switch (this.getVariant()) {
             default:
                 break;
-            case 4: //Slow
+            case 1: //Charm
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 int finalI = i;
                 entities.forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 20 * finalI / 2 , 2), this.getEffectCause());
+                    livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.CHARM, 20 * finalI / 2), this.getEffectCause());
                 });
                 break;
-            case 5: //Wither/Explosion
+            case 4: //Slow
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 int finalI1 = i;
                 entities.forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 20 * finalI1 / 2 , 2), this.getEffectCause());
+                });
+                break;
+            case 5: //Wither/Explosion
+                if (this.world.isClient) return;
+                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                int finalI2 = i;
+                entities.forEach(entity -> {
+                    LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.damage(DamageSource.MAGIC, 5.0F);
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI1, 1), this.getEffectCause());
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI2, 1), this.getEffectCause());
                 });
                 this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 2.0F, false, destructionType);
                 break;
@@ -167,10 +177,10 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
             case 8: //Petrification
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI2 = i;
+                int finalI3 = i;
                 entities.forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI2 / 4, 1), this.getEffectCause());
+                    livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI3 / 4, 1), this.getEffectCause());
                 });
                 break;
             case 10: //Death ray

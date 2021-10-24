@@ -7,8 +7,8 @@ import net.minecraft.util.registry.Registry;
 import robmart.mod.rpgmodecore.common.reference.Reference;
 
 public class RPGStatusEffects {
-    public static final StatusEffect PETRIFICATION = new PetrificationStatusEffect();
-    public static final StatusEffect CHARM = new CharmStatusEffect();
+    public static final RPGStatusEffect PETRIFICATION = new PetrificationStatusEffect();
+    public static final RPGStatusEffect CHARM = new CharmStatusEffect();
 
     public static void register() {
         Registry.register(Registry.STATUS_EFFECT, new Identifier(Reference.MOD_ID, "petrification"), PETRIFICATION);

@@ -4,7 +4,7 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 
 public class RPGStatusEffect extends StatusEffect {
-    private boolean needsTarget;
+    private boolean needsTarget = false;
 
     protected RPGStatusEffect(StatusEffectCategory category, int color) {
         super(category, color);
