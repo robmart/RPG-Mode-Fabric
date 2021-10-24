@@ -9,7 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import java.util.Iterator;
 import java.util.Map;
 
-public class PetrificationStatusEffect extends StatusEffect {
+public class PetrificationStatusEffect extends RPGStatusEffect {
     protected PetrificationStatusEffect() {
         super(StatusEffectCategory.HARMFUL, 262222);
         this.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "c30124e9-2e74-43ea-be3b-aecb58370149", -1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
