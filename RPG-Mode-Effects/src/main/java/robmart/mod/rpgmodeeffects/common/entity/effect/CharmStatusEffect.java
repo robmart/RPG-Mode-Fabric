@@ -2,7 +2,7 @@ package robmart.mod.rpgmodeeffects.common.entity.effect;
 
 import net.minecraft.entity.effect.StatusEffectCategory;
 
-public class CharmStatusEffect extends RPGStatusEffect {
+public class CharmStatusEffect extends RPGStatusEffect { //TODO: Automatically end effect when attacker harms target
 
     protected CharmStatusEffect() {
         super(StatusEffectCategory.HARMFUL, 0xbf2271);

@@ -23,6 +23,7 @@ public class StatusEffectInstanceMixin implements IStatusEffectTarget {
     private UUID attackerUUID = null;
     private UUID targetUUID = null;
 
+    //TODO: Use inject instead, for compatibility
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;fromNbt(Lnet/minecraft/entity/effect/StatusEffect;Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/entity/effect/StatusEffectInstance;"), method = "fromNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/entity/effect/StatusEffectInstance;")
     private static StatusEffectInstance fromNbt(StatusEffect type, NbtCompound nbt) {
         int i = nbt.getByte("Amplifier");
