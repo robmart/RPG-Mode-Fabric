@@ -156,6 +156,19 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                     livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 20 * finalI1), this.getEffectCause());
                 });
                 break;
+            case 3: //Poison/Hunger/Weakness
+                if (this.world.isClient) return;
+                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                int finalI2 = i;
+                entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
+                    LivingEntity livingEntity = (LivingEntity) entity;
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 20 * finalI2, 1), this.getEffectCause());
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 20 * finalI2), this.getEffectCause());
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 20 * finalI2 * 2), this.getEffectCause());
+                });
+                break;
             case 4: //Slow
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
@@ -180,7 +193,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 });
                 this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 2.0F, false, destructionType);
                 break;
-            case 6: //Yeet
+            case 6: //Yeet TODO: Random sideways yeeting
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 entities.forEach(entity -> {
                     if (entity == this.getOwner()) return;
