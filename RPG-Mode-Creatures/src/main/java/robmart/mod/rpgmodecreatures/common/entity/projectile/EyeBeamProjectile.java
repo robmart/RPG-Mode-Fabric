@@ -12,6 +12,8 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -68,32 +70,28 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
 
     @Override
     public void tick() {
-        super.tick();
-        Vec3d vec3d;
+        Entity entity = this.getOwner();
+        if (this.world.isClient || (entity == null || !entity.isRemoved()) && this.world.isChunkLoaded(this.getBlockPos())) {
+            super.tick();
+            Vec3d vec3d;
 
-        if (this.prevPitch == 0.0F && this.prevYaw == 0.0F) {
-            updateRotation();
+            if (this.prevPitch == 0.0F && this.prevYaw == 0.0F) {
+                updateRotation();
+            }
+
+            vec3d = this.getVelocity();
+            double d = vec3d.x;
+            double e = vec3d.y;
+            double g = vec3d.z;
+            double l = vec3d.horizontalLength();
+
+            this.setYaw((float) (MathHelper.atan2(d, g) * 57.2957763671875D));
+            this.setPitch((float) (MathHelper.atan2(e, l) * 57.2957763671875D));
+            this.setPitch(updateRotation(this.prevPitch, this.getPitch()));
+            this.setYaw(updateRotation(this.prevYaw, this.getYaw()));
+
+            this.checkBlockCollision();
         }
-
-        vec3d = this.getVelocity();
-        double d = vec3d.x;
-        double e = vec3d.y;
-        double g = vec3d.z;
-        double h = this.getX() + d;
-        double j = this.getY() + e;
-        double k = this.getZ() + g;
-        double l = vec3d.horizontalLength();
-
-        this.setYaw((float) (MathHelper.atan2(d, g) * 57.2957763671875D));
-        this.setPitch( (float) (MathHelper.atan2(e, l) * 57.2957763671875D));
-        this.setPitch(updateRotation(this.prevPitch, this.getPitch()));
-        this.setYaw(updateRotation(this.prevYaw, this.getYaw()));
-        float m = 0.99F;
-
-        this.setVelocity(vec3d.multiply(m));
-
-        this.updatePosition(h, j, k);
-        this.checkBlockCollision();
     }
 
     @Override
@@ -111,7 +109,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
     }
 
     public boolean collides() {
-        return false;
+        return true;
     }
 
     public boolean damage(DamageSource source, float amount) {
@@ -197,29 +195,19 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
 
                     LivingEntity livingEntity = (LivingEntity) entity;
                     Random random = livingEntity.getRandom();
-                    int randomNum = random.nextInt(4) + 1;
+                    int randomNum = random.nextInt(6) + 1;
+                    EquipmentSlot slot = switch (randomNum) {
+                        case 1 -> EquipmentSlot.HEAD;
+                        case 2 -> EquipmentSlot.CHEST;
+                        case 3 -> EquipmentSlot.LEGS;
+                        case 4 -> EquipmentSlot.FEET;
+                        case 5 -> EquipmentSlot.MAINHAND;
+                        case 6 -> EquipmentSlot.OFFHAND;
+                        default -> null;
+                    };
 
-                    switch (randomNum) {
-                        case 1:
-                            if (livingEntity.hasStackEquipped(EquipmentSlot.HEAD)) {
-                                livingEntity.getEquippedStack(EquipmentSlot.HEAD).damage(livingEntity.getEquippedStack(EquipmentSlot.HEAD).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.HEAD));
-                            }
-                            break;
-                        case 2:
-                            if (livingEntity.hasStackEquipped(EquipmentSlot.CHEST)) {
-                                livingEntity.getEquippedStack(EquipmentSlot.CHEST).damage(livingEntity.getEquippedStack(EquipmentSlot.CHEST).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.CHEST));
-                            }
-                            break;
-                        case 3:
-                            if (livingEntity.hasStackEquipped(EquipmentSlot.LEGS)) {
-                                livingEntity.getEquippedStack(EquipmentSlot.LEGS).damage(livingEntity.getEquippedStack(EquipmentSlot.LEGS).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.LEGS));
-                            }
-                            break;
-                        case 4:
-                            if (livingEntity.hasStackEquipped(EquipmentSlot.FEET)) {
-                                livingEntity.getEquippedStack(EquipmentSlot.FEET).damage(livingEntity.getEquippedStack(EquipmentSlot.FEET).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.FEET));
-                            }
-                            break;
+                    if (livingEntity.hasStackEquipped(slot)) {
+                        livingEntity.getEquippedStack(slot).damage(livingEntity.getEquippedStack(slot).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(slot));
                     }
 
                     livingEntity.damage(DamageSource.MAGIC, 10F);

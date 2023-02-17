@@ -7,7 +7,7 @@ public class RPGEntityGroup { //TODO: Change group of vanilla stuff
     public static final EntityGroup FEY = new EntityGroup();
     public static final MetaEntityGroup ELEMENTAL = new MetaEntityGroup();
     public static final EntityGroup FIRE = new EntityGroup();
-    public static final EntityGroup WATER = new EntityGroup();
+    public static final MetaEntityGroup WATER = new MetaEntityGroup();
     public static final EntityGroup EARTH = new EntityGroup();
     public static final EntityGroup AIR = new EntityGroup();
     public static final MetaEntityGroup FIEND = new MetaEntityGroup();
@@ -31,9 +31,12 @@ public class RPGEntityGroup { //TODO: Change group of vanilla stuff
         ELEMENTAL.subGroups.add(EARTH);
         ELEMENTAL.subGroups.add(AIR);
 
+        WATER.subGroups.add(EntityGroup.AQUATIC);
+
         FIEND.subGroups.add(DEMON);
         FIEND.subGroups.add(DEVIL);
 
         BEAST.subGroups.add(EntityGroup.AQUATIC);
+        BEAST.subGroups.add(EntityGroup.ARTHROPOD);
     }
 }
