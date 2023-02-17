@@ -123,7 +123,9 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
         List<Entity> entities;
 
         int i = 0;
-        if (this.world.getDifficulty() == Difficulty.NORMAL) {
+        if (this.world.getDifficulty() == Difficulty.EASY) {
+            i = 10;
+        } else if (this.world.getDifficulty() == Difficulty.NORMAL) {
             i = 20;
         } else if (this.world.getDifficulty() == Difficulty.HARD) {
             i = 40;
@@ -143,7 +145,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                     livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.CHARM, 20 * finalI / 2), this.getEffectCause());
                 });
                 break;
-            case 4: //Slow
+            case 2: //Nausea
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                 int finalI1 = i;
@@ -151,19 +153,30 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                     if (entity == this.getOwner()) return;
 
                     LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 20 * finalI1 / 2 , 2), this.getEffectCause());
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 20 * finalI1), this.getEffectCause());
+                });
+                break;
+            case 4: //Slow
+                if (this.world.isClient) return;
+                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                int finalI3 = i;
+                entities.forEach(entity -> {
+                    if (entity == this.getOwner()) return;
+
+                    LivingEntity livingEntity = (LivingEntity) entity;
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 20 * finalI3 / 2 , 2), this.getEffectCause());
                 });
                 break;
             case 5: //Wither/Explosion
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI2 = i;
+                int finalI4 = i;
                 entities.forEach(entity -> {
                     if (entity == this.getOwner()) return;
 
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.damage(DamageSource.MAGIC, 5.0F);
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI2, 1), this.getEffectCause());
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI4, 1), this.getEffectCause());
                 });
                 this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 2.0F, false, destructionType);
                 break;
@@ -179,12 +192,12 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
             case 8: //Petrification
                 if (this.world.isClient) return;
                 entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI3 = i;
+                int finalI7 = i;
                 entities.forEach(entity -> {
                     if (entity == this.getOwner()) return;
 
                     LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI3 / 4, 1), this.getEffectCause());
+                    livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI7 / 4, 1), this.getEffectCause());
                 });
                 break;
             case 9: //Disintegration
