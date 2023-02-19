@@ -22,8 +22,8 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(at = @At(value = "TAIL"), method = "onStatusEffectApplied")
     private void onStatusEffectApplied(StatusEffectInstance effect, Entity source, CallbackInfo ci) {
         if (!this.world.isClient && effect.getEffectType() instanceof RPGStatusEffect rpgStatusEffect && rpgStatusEffect.needsTarget()) {
-            ((IStatusEffectTarget) effect).setTarget(source);
-            ((IStatusEffectTarget) effect).setAttacker((LivingEntity) (Object) this);
+            ((IStatusEffectTarget) effect).setAttacker(source);
+            ((IStatusEffectTarget) effect).setTarget((LivingEntity) (Object) this);
         }
     }
 }

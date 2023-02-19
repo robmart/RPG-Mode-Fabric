@@ -138,7 +138,6 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                 default:
                     break;
                 case 1: //Charm
-                    if (this.world.isClient) return;
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                     int finalI = i;
                     entities.forEach(entity -> {
@@ -149,7 +148,6 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                     });
                     break;
                 case 2: //Nausea
-                    if (this.world.isClient) return;
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                     int finalI1 = i;
                     entities.forEach(entity -> {
@@ -160,7 +158,6 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                     });
                     break;
                 case 3: //Poison/Hunger/Weakness
-                    if (this.world.isClient) return;
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                     int finalI2 = i;
                     entities.forEach(entity -> {
@@ -173,7 +170,6 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                     });
                     break;
                 case 4: //Slow
-                    if (this.world.isClient) return;
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                     int finalI3 = i;
                     entities.forEach(entity -> {
@@ -184,14 +180,13 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                     });
                     break;
                 case 5: //Wither/Explosion
-                    if (this.world.isClient) return;
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                     int finalI4 = i;
                     entities.forEach(entity -> {
                         if (entity == this.getOwner()) return;
 
                         LivingEntity livingEntity = (LivingEntity) entity;
-                        livingEntity.damage(DamageSource.MAGIC, 5.0F);
+                        livingEntity.damage(DamageSource.magic(this, getOwner()), 5.0F);
                         livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI4, 1), this.getEffectCause());
                     });
                     this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 2.0F, false, destructionType);
@@ -212,8 +207,17 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                         livingEntity.velocityModified = true;
                     });
                     break;
+                case 7: //Sleep
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    int finalI6 = i;
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.SLEEP, 20 * finalI6 * 2, 1), this.getEffectCause());
+                    });
+                    break;
                 case 8: //Petrification
-                    if (this.world.isClient) return;
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                     int finalI7 = i;
                     entities.forEach(entity -> {
@@ -224,7 +228,6 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                     });
                     break;
                 case 9: //Disintegration
-                    if (this.world.isClient) return;
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                     entities.forEach(entity -> {
                         if (entity == this.getOwner()) return;
@@ -246,17 +249,16 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                             livingEntity.getEquippedStack(slot).damage(livingEntity.getEquippedStack(slot).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(slot));
                         }
 
-                        livingEntity.damage(DamageSource.MAGIC, 10F);
+                        livingEntity.damage(DamageSource.magic(this, getOwner()), 10F);
                     });
                     break;
                 case 10: //Death ray
-                    if (this.world.isClient) return;
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
                     entities.forEach(entity -> {
                         if (entity == this.getOwner()) return;
 
                         LivingEntity livingEntity = (LivingEntity) entity;
-                        livingEntity.damage(DamageSource.MAGIC, 15.0F);
+                        livingEntity.damage(DamageSource.magic(this, getOwner()), 15.0F);
                     });
                     break;
             }
