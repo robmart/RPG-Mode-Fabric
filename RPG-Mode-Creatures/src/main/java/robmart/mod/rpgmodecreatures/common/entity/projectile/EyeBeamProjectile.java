@@ -11,6 +11,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
@@ -31,6 +32,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAnimatable, IVariants<Integer> {
@@ -119,139 +121,148 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
     @Override
     protected void onCollision(HitResult hitResult) {
         super.onCollision(hitResult);
-        Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
-        List<Entity> entities;
+        if (!this.world.isClient) {
+            Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
+            List<Entity> entities;
 
-        int i = 0;
-        if (this.world.getDifficulty() == Difficulty.EASY) {
-            i = 10;
-        } else if (this.world.getDifficulty() == Difficulty.NORMAL) {
-            i = 20;
-        } else if (this.world.getDifficulty() == Difficulty.HARD) {
-            i = 40;
+            int i = 0;
+            if (this.world.getDifficulty() == Difficulty.EASY) {
+                i = 10;
+            } else if (this.world.getDifficulty() == Difficulty.NORMAL) {
+                i = 20;
+            } else if (this.world.getDifficulty() == Difficulty.HARD) {
+                i = 40;
+            }
+
+            switch (this.getVariant()) {
+                default:
+                    break;
+                case 1: //Charm
+                    if (this.world.isClient) return;
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    int finalI = i;
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.CHARM, 20 * finalI / 2), this.getEffectCause());
+                    });
+                    break;
+                case 2: //Nausea
+                    if (this.world.isClient) return;
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    int finalI1 = i;
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 20 * finalI1), this.getEffectCause());
+                    });
+                    break;
+                case 3: //Poison/Hunger/Weakness
+                    if (this.world.isClient) return;
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    int finalI2 = i;
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 20 * finalI2, 1), this.getEffectCause());
+                        livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 20 * finalI2), this.getEffectCause());
+                        livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 20 * finalI2 * 2), this.getEffectCause());
+                    });
+                    break;
+                case 4: //Slow
+                    if (this.world.isClient) return;
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    int finalI3 = i;
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 20 * finalI3 / 2, 2), this.getEffectCause());
+                    });
+                    break;
+                case 5: //Wither/Explosion
+                    if (this.world.isClient) return;
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    int finalI4 = i;
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        livingEntity.damage(DamageSource.MAGIC, 5.0F);
+                        livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI4, 1), this.getEffectCause());
+                    });
+                    this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 2.0F, false, destructionType);
+                    break;
+                case 6: //Yeet
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        if (livingEntity instanceof PlayerEntity) System.out.println(world.isClient + " P");
+                        double rangeMin = -0.5;
+                        double rangeMax = 0.5;
+                        double x = ThreadLocalRandom.current().nextDouble(rangeMin, rangeMax);
+                        double y = ThreadLocalRandom.current().nextDouble(rangeMin, rangeMax);
+                        double z = ThreadLocalRandom.current().nextDouble(rangeMin, rangeMax);
+                        livingEntity.setVelocity(x, 1.5 + y, z);
+                        livingEntity.velocityModified = true;
+                    });
+                    break;
+                case 8: //Petrification
+                    if (this.world.isClient) return;
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    int finalI7 = i;
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI7 / 4, 1), this.getEffectCause());
+                    });
+                    break;
+                case 9: //Disintegration
+                    if (this.world.isClient) return;
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        Random random = livingEntity.getRandom();
+                        int randomNum = random.nextInt(6) + 1;
+                        EquipmentSlot slot = switch (randomNum) {
+                            case 1 -> EquipmentSlot.HEAD;
+                            case 2 -> EquipmentSlot.CHEST;
+                            case 3 -> EquipmentSlot.LEGS;
+                            case 4 -> EquipmentSlot.FEET;
+                            case 5 -> EquipmentSlot.MAINHAND;
+                            case 6 -> EquipmentSlot.OFFHAND;
+                            default -> null;
+                        };
+
+                        if (livingEntity.hasStackEquipped(slot)) {
+                            livingEntity.getEquippedStack(slot).damage(livingEntity.getEquippedStack(slot).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(slot));
+                        }
+
+                        livingEntity.damage(DamageSource.MAGIC, 10F);
+                    });
+                    break;
+                case 10: //Death ray
+                    if (this.world.isClient) return;
+                    entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
+                    entities.forEach(entity -> {
+                        if (entity == this.getOwner()) return;
+
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        livingEntity.damage(DamageSource.MAGIC, 15.0F);
+                    });
+                    break;
+            }
+
+            this.discard();
         }
-
-        switch (this.getVariant()) {
-            default:
-                break;
-            case 1: //Charm
-                if (this.world.isClient) return;
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI = i;
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.CHARM, 20 * finalI / 2), this.getEffectCause());
-                });
-                break;
-            case 2: //Nausea
-                if (this.world.isClient) return;
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI1 = i;
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 20 * finalI1), this.getEffectCause());
-                });
-                break;
-            case 3: //Poison/Hunger/Weakness
-                if (this.world.isClient) return;
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI2 = i;
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 20 * finalI2, 1), this.getEffectCause());
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 20 * finalI2), this.getEffectCause());
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 20 * finalI2 * 2), this.getEffectCause());
-                });
-                break;
-            case 4: //Slow
-                if (this.world.isClient) return;
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI3 = i;
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 20 * finalI3 / 2 , 2), this.getEffectCause());
-                });
-                break;
-            case 5: //Wither/Explosion
-                if (this.world.isClient) return;
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI4 = i;
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.damage(DamageSource.MAGIC, 5.0F);
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI4, 1), this.getEffectCause());
-                });
-                this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 2.0F, false, destructionType);
-                break;
-            case 6: //Yeet TODO: Random sideways yeeting
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.setVelocity(0, 1.5, 0);
-                });
-                break;
-            case 8: //Petrification
-                if (this.world.isClient) return;
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                int finalI7 = i;
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI7 / 4, 1), this.getEffectCause());
-                });
-                break;
-            case 9: //Disintegration
-                if (this.world.isClient) return;
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    Random random = livingEntity.getRandom();
-                    int randomNum = random.nextInt(6) + 1;
-                    EquipmentSlot slot = switch (randomNum) {
-                        case 1 -> EquipmentSlot.HEAD;
-                        case 2 -> EquipmentSlot.CHEST;
-                        case 3 -> EquipmentSlot.LEGS;
-                        case 4 -> EquipmentSlot.FEET;
-                        case 5 -> EquipmentSlot.MAINHAND;
-                        case 6 -> EquipmentSlot.OFFHAND;
-                        default -> null;
-                    };
-
-                    if (livingEntity.hasStackEquipped(slot)) {
-                        livingEntity.getEquippedStack(slot).damage(livingEntity.getEquippedStack(slot).getMaxDamage() / 10, livingEntity, (e) -> e.sendEquipmentBreakStatus(slot));
-                    }
-
-                    livingEntity.damage(DamageSource.MAGIC, 10F);
-                });
-                break;
-            case 10: //Death ray
-                if (this.world.isClient) return;
-                entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
-                entities.forEach(entity -> {
-                    if (entity == this.getOwner()) return;
-
-                    LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.damage(DamageSource.MAGIC, 15.0F);
-                });
-                break;
-        }
-
-        this.discard();
     }
 
     @Override
