@@ -13,6 +13,9 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleType;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -265,6 +268,11 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
 
             this.discard();
         }
+    }
+
+    @Override
+    protected ParticleEffect getParticleType() {
+        return ParticleTypes.WITCH;
     }
 
     @Override
