@@ -6,7 +6,7 @@ import net.minecraft.entity.effect.StatusEffectCategory;
 
 import java.util.Map;
 
-public class SleepStatusEffect extends RPGStatusEffect { //TODO: Automatically end effect when attacker harms target
+public class SleepStatusEffect extends RPGStatusEffect {
 
     protected SleepStatusEffect() {
         super(StatusEffectCategory.HARMFUL, 0xbf2271);
