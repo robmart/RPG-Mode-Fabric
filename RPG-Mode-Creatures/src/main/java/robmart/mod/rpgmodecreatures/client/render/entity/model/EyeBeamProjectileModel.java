@@ -13,7 +13,7 @@ public class EyeBeamProjectileModel extends AnimatedGeoModel<EyeBeamProjectile> 
 
     @Override
     public Identifier getTextureLocation(EyeBeamProjectile object) {
-        return new Identifier(Reference.MOD_ID, "textures/entity/eye_beam.png");
+        return new Identifier(Reference.MOD_ID, "textures/entity/eye_beam/eye_beam_" + object.getVariant() + ".png");
     }
 
     @Override
