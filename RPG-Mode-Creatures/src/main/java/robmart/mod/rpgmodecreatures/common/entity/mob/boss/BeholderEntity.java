@@ -168,16 +168,16 @@ public class BeholderEntity extends HostileEntity implements Monster, IAnimatabl
         Vec3d relPos;
         switch (eyeIndex) {
             default -> relPos = new Vec3d(0, 0, 0);
-            case 1 -> relPos = new Vec3d(-3, 0, 1);
-            case 2 -> relPos = new Vec3d(-2.6, 0.4, 0.7);
-            case 3 -> relPos = new Vec3d(-2.6, 1.5, 1.1);
-            case 4 -> relPos = new Vec3d(-2.35, 2.8, 1.2);
-            case 5 -> relPos = new Vec3d(-1, 3.3, 1.2);
-            case 6 -> relPos = new Vec3d(0.2, 3.5, 1.8);
-            case 7 -> relPos = new Vec3d(1.2, 2.85, 1.55);
-            case 8 -> relPos = new Vec3d(2.45, 2.55, 1.55);
-            case 9 -> relPos = new Vec3d(2.45, 1, 1.2);
-            case 10 -> relPos = new Vec3d(2.65, 0, 2);
+            case 1 -> relPos = new Vec3d(-2.6, -0.45, 1.3);
+            case 2 -> relPos = new Vec3d(-2.55, 0.55, 0.9);
+            case 3 -> relPos = new Vec3d(-2.5, 1.75, 1.5);
+            case 4 -> relPos = new Vec3d(-2.15, 2.9, 1.55);
+            case 5 -> relPos = new Vec3d(-0.95, 3.6, 1.575);
+            case 6 -> relPos = new Vec3d(0.3, 3.7, 2.05);
+            case 7 -> relPos = new Vec3d(1.45, 3.15, 1.55);
+            case 8 -> relPos = new Vec3d(2.6, 2.5, 1.7);
+            case 9 -> relPos = new Vec3d(2.6, 1, 1.2);
+            case 10 -> relPos = new Vec3d(2.425, -0.25, 2.25);
         }
 
         Vec3d pos = RPGMathHelper.toAbsolutePos(new Vec3d(this.getX(), this.getY(), this.getZ()), relPos, new Vec2f(this.getPitch(), this.getYaw()));
