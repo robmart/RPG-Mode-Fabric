@@ -11,11 +11,11 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import robmart.mod.rpgmodecore.common.reference.Reference;
 import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
 import robmart.mod.rpgmodecreatures.common.entity.mob.RatEntity;
 import robmart.mod.rpgmodecreatures.common.entity.mob.boss.BeholderEntity;
 import robmart.mod.rpgmodecreatures.common.entity.projectile.EyeBeamProjectile;
-import robmart.mod.rpgmodecreatures.common.reference.Reference;
 import software.bernie.geckolib.GeckoLib;
 
 import java.util.Optional;
