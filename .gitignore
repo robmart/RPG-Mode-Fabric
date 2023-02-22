@@ -100,7 +100,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-.gradle
+.gradle/
 build/
 
 # Ignore Gradle GUI config
@@ -109,6 +109,7 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
+**/.gradle/
 **/build/
 
 # Common working directory

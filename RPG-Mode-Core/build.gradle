@@ -1,3 +1,2 @@
-version = getSubprojectVersion(project, "1.0.0")
-group = project.maven_group
+version = getSubprojectVersion(project)
 archivesBaseName = "rpgmodecore"

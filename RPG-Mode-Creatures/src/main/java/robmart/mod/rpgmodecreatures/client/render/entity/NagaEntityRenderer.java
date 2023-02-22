@@ -5,16 +5,23 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.ZombieEntityRenderer;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.model.ModelWithArms;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Arm;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import robmart.mod.rpgmodecreatures.client.render.entity.model.NagaEntityModel;
 import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class NagaEntityRenderer extends GeoEntityRenderer<NagaEntity> {
     VertexConsumerProvider vertexConsumerProvider;
@@ -31,48 +38,73 @@ public class NagaEntityRenderer extends GeoEntityRenderer<NagaEntity> {
         float i = entityLiving.getLeaningPitch(partialTicks);
         float n = entityLiving.isTouchingWater() ? -entityLiving.getPitch() : 0;
         float k = MathHelper.lerp(i, 0.0F, n);
-        matrixstack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(k));
+        matrixstack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(k));
         if (entityLiving.isInSwimmingPose()) {
             matrixstack.translate(0.0D, 0, 0.30000001192092896D);
         }
     }
 
     @Override
-    public void renderEarly(NagaEntity animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
-        super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
+    public void preRender(MatrixStack poseStack, NagaEntity animatable, BakedGeoModel model, VertexConsumerProvider bufferSource,
+                          VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay,
+                          float red, float green, float blue, float alpha) {
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight,
+                packedOverlay, red, green, blue, alpha);
 
-        vertexConsumerProvider = renderTypeBuffer;
+        vertexConsumerProvider = bufferSource;
         entity = animatable;
     }
 
     @Override
-    public void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
-                                  int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void renderRecursively(MatrixStack stack, NagaEntity animatable, GeoBone bone, RenderLayer renderType,
+                                  VertexConsumerProvider bufferSource, VertexConsumer bufferIn, boolean isReRender,
+                                  float partialTick, int packedLightIn, int packedOverlayIn, float red, float green,
+                                  float blue, float alpha) {
 
         if (bone.getName().equals("Hand1")) {
-            stack.push();
-            //You'll need to play around with these to get item to render in the correct orientation
-            stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(75));
-            stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
-            stack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(0));
-
-            //You'll need to play around with this to render the item in the correct spot.
-            stack.translate(0.4D, 0.47D, 1D);
-            stack.translate(bone.getPositionX(), bone.getPositionZ(), bone.getPositionY());
-
-            stack.multiply(new Quaternion(-bone.getRotationX(), -bone.getRotationZ(), bone.getRotationY(), false));
-
-            //Sets the scaling of the item.
-            stack.scale(1.0f, 1.0f, 1.0f);
-
-            if (vertexConsumerProvider != null && entity != null)
-                MinecraftClient.getInstance().getHeldItemRenderer().renderItem(entity, mainHand, ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND, false, stack, vertexConsumerProvider, packedLightIn);
-            stack.pop();
-            bufferIn = rtb.getBuffer(RenderLayer.getEntityTranslucent(whTexture));
-
-
+            boolean bl = ((LivingEntity)animatable).getMainArm() == Arm.RIGHT;
+            ItemStack itemStack2 = bl ? animatable.getMainHandStack() : animatable.getOffHandStack();
+            if (!itemStack2.isEmpty()) {
+                stack.push();
+                if (vertexConsumerProvider != null && entity != null) {
+                    this.renderItem(bone, animatable, itemStack2, ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND, Arm.RIGHT, stack, vertexConsumerProvider, packedLightIn);
+                }
+                stack.pop();
+                bufferSource.getBuffer(RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable)));
+            }
+        } else if (bone.getName().equals("Hand2")) {
+            boolean bl = ((LivingEntity)animatable).getMainArm() == Arm.RIGHT;
+            ItemStack itemStack = bl ? animatable.getOffHandStack() : animatable.getMainHandStack();
+            if (!itemStack.isEmpty()) {
+                stack.push();
+                if (vertexConsumerProvider != null && entity != null) {
+                    this.renderItem(bone, animatable, itemStack, ModelTransformation.Mode.THIRD_PERSON_LEFT_HAND, Arm.LEFT, stack, vertexConsumerProvider, packedLightIn);
+                }
+                stack.pop();
+                bufferSource.getBuffer(RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable)));
+            }
         }
 
-        super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        super.renderRecursively(stack, animatable, bone, renderType, bufferSource, bufferIn, isReRender, partialTick,
+                packedLightIn, packedOverlayIn, red, green, blue, alpha);
+    }
+
+    protected void renderItem(GeoBone bone, LivingEntity entity, ItemStack stack, ModelTransformation.Mode transformationMode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+        if (!stack.isEmpty()) {
+            matrices.push();
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(75));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(0));
+
+            matrices.translate(-0.325D, -0.3D, 1.65D);
+
+            matrices.translate(bone.getPosX(), bone.getPosZ(), bone.getPosY());
+            matrices.multiply(new Quaternionf(-bone.getRotX(), -bone.getRotZ(), bone.getRotY(), 1));
+
+            boolean bl = arm == Arm.LEFT;
+            matrices.translate((float)(bl ? 0.7 : 0), 0.125F, -0.625F + (float)(bl ? 0.05 : 0));
+            MinecraftClient.getInstance().gameRenderer.firstPersonRenderer.renderItem(entity, stack, transformationMode, bl, matrices, vertexConsumers, light);
+            matrices.pop();
+        }
     }
 }
