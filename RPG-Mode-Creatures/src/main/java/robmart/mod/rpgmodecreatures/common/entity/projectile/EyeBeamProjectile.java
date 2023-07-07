@@ -14,13 +14,11 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -28,20 +26,25 @@ import net.minecraft.world.explosion.Explosion;
 import robmart.mod.rpgmodecreatures.common.RPGModeCreatures;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
+import robmart.mod.rpgmodecreatures.common.entity.mob.RatEntity;
 import robmart.mod.rpgmodeeffects.common.entity.effect.RPGStatusEffects;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Consumer;
 
-public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAnimatable, IVariants<Integer> {
+public class EyeBeamProjectile extends ExplosiveProjectileEntity implements GeoAnimatable, IVariants<Integer> {
     public static final TrackedData<Integer> VARIANT = DataTracker.registerData(NagaEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
+    private int tickCounter = 0;
 
     public EyeBeamProjectile(EntityType<EyeBeamProjectile> eyeBeamProjectileEntityType, World world) {
         super(eyeBeamProjectileEntityType, world);
@@ -78,13 +81,11 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
         Entity entity = this.getOwner();
         if (this.world.isClient || (entity == null || !entity.isRemoved()) && this.world.isChunkLoaded(this.getBlockPos())) {
             super.tick();
-            Vec3d vec3d;
-
             if (this.prevPitch == 0.0F && this.prevYaw == 0.0F) {
                 updateRotation();
             }
 
-            vec3d = this.getVelocity();
+            Vec3d vec3d = this.getVelocity();
             double d = vec3d.x;
             double e = vec3d.y;
             double g = vec3d.z;
@@ -97,6 +98,9 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
 
             this.checkBlockCollision();
         }
+
+        if (world.isClient)
+            tickCounter++;
     }
 
     @Override
@@ -125,7 +129,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
     protected void onCollision(HitResult hitResult) {
         super.onCollision(hitResult);
         if (!this.world.isClient) {
-            Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
+            World.ExplosionSourceType explosionSourceType = World.ExplosionSourceType.MOB;
             List<Entity> entities;
 
             int i = 0;
@@ -192,7 +196,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
                         livingEntity.damage(DamageSource.magic(this, getOwner()), 5.0F);
                         livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 20 * finalI4, 1), this.getEffectCause());
                     });
-                    this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 2.0F, false, destructionType);
+                    this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 2.0F, false, explosionSourceType);
                     break;
                 case 6: //Yeet
                     entities = world.getOtherEntities(this, this.getBoundingBox().expand(4.0D, 2.0D, 4.0D), (entity -> entity instanceof LivingEntity));
@@ -275,13 +279,22 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements IAni
         return ParticleTypes.WITCH;
     }
 
-    @Override
-    public void registerControllers(AnimationData animationData) {
-
+    private PlayState animationPredicate(AnimationState<EyeBeamProjectile> animationState) {
+        return PlayState.CONTINUE;
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return factory;
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::animationPredicate));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
+    }
+
+    @Override
+    public double getTick(Object o) {
+        return tickCounter;
     }
 }

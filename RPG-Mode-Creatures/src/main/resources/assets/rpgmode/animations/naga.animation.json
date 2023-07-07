@@ -358,6 +358,9 @@
 					}
 				}
 			}
+		},
+		"animation.naga.none": {
+			"loop": true
 		}
 	}
 }

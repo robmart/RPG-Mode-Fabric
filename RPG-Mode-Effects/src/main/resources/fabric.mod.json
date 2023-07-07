@@ -18,9 +18,9 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.11.6",
+    "fabricloader": ">=0.14.14",
     "fabric": "*",
-    "minecraft": "1.17.1",
+    "minecraft": "1.19.3",
     "rpgmode-core": "*"
   },
   "mixins": [

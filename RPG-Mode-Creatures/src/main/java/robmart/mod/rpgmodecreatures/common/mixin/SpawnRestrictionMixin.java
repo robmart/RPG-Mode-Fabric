@@ -14,8 +14,8 @@ import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
 public class SpawnRestrictionMixin {
 
     @Shadow
-    private static <T extends MobEntity> void register(EntityType<T> type, SpawnRestriction.Location location,
-                                                       Heightmap.Type heightmapType, SpawnRestriction.SpawnPredicate<T> predicate) {
+    public static <T extends MobEntity> void register(EntityType<T> type, SpawnRestriction.Location location,
+                                                      Heightmap.Type heightmapType, SpawnRestriction.SpawnPredicate<T> predicate) {
     }
 
     static {

@@ -5,7 +5,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import robmart.mod.rpgmodecreatures.client.render.entity.model.BeholderEntityModel;
 import robmart.mod.rpgmodecreatures.common.entity.mob.boss.BeholderEntity;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class BeholderEntityRenderer extends GeoEntityRenderer<BeholderEntity> {
 

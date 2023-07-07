@@ -21,10 +21,10 @@
     "rpgmode-creatures.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.6",
+    "fabricloader": ">=0.14.14",
     "fabric": "*",
-    "minecraft": "1.17.1",
-    "geckolib3": ">=3.0.13",
+    "minecraft": "1.19.3",
+    "geckolib": ">=4.0.3",
     "rpgmode-core": "*",
     "rpgmode-effects": "*"
   },

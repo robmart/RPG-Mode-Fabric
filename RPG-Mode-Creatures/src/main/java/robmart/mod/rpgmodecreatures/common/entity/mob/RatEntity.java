@@ -16,53 +16,58 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeKeys;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.Optional;
 
-public class RatEntity extends HostileEntity implements IAnimatable, IVariants<String> {
+public class RatEntity extends HostileEntity implements GeoAnimatable, IVariants<String> {
     public static List<Optional<BiomeKeys>> biomeList = List.of(new Optional[]{
             Optional.of(BiomeKeys.PLAINS),
             Optional.of(BiomeKeys.FOREST),
             Optional.of(BiomeKeys.TAIGA),
             Optional.of(BiomeKeys.SWAMP),
             Optional.of(BiomeKeys.MUSHROOM_FIELDS),
-            Optional.of(BiomeKeys.MUSHROOM_FIELD_SHORE),
-            Optional.of(BiomeKeys.WOODED_HILLS),
             Optional.of(BiomeKeys.JUNGLE),
-            Optional.of(BiomeKeys.JUNGLE_HILLS),
-            Optional.of(BiomeKeys.JUNGLE_EDGE),
+            Optional.of(BiomeKeys.SPARSE_JUNGLE),
             Optional.of(BiomeKeys.BIRCH_FOREST),
-            Optional.of(BiomeKeys.BIRCH_FOREST_HILLS),
             Optional.of(BiomeKeys.DARK_FOREST),
-            Optional.of(BiomeKeys.WOODED_MOUNTAINS),
             Optional.of(BiomeKeys.SAVANNA),
             Optional.of(BiomeKeys.SAVANNA_PLATEAU),
-            Optional.of(BiomeKeys.WOODED_BADLANDS_PLATEAU),
+            Optional.of(BiomeKeys.WOODED_BADLANDS),
             Optional.of(BiomeKeys.SUNFLOWER_PLAINS),
             Optional.of(BiomeKeys.FLOWER_FOREST),
-            Optional.of(BiomeKeys.SWAMP_HILLS),
-            Optional.of(BiomeKeys.MODIFIED_JUNGLE),
-            Optional.of(BiomeKeys.MODIFIED_JUNGLE_EDGE),
-            Optional.of(BiomeKeys.TALL_BIRCH_FOREST),
-            Optional.of(BiomeKeys.TALL_BIRCH_HILLS),
-            Optional.of(BiomeKeys.DARK_FOREST_HILLS),
-            Optional.of(BiomeKeys.GIANT_SPRUCE_TAIGA),
-            Optional.of(BiomeKeys.GIANT_SPRUCE_TAIGA_HILLS),
+            Optional.of(BiomeKeys.MANGROVE_SWAMP),
+            Optional.of(BiomeKeys.OLD_GROWTH_BIRCH_FOREST),
+            Optional.of(BiomeKeys.OLD_GROWTH_PINE_TAIGA),
+            Optional.of(BiomeKeys.OLD_GROWTH_SPRUCE_TAIGA),
             Optional.of(BiomeKeys.BAMBOO_JUNGLE),
-            Optional.of(BiomeKeys.BAMBOO_JUNGLE_HILLS),
+            Optional.of(BiomeKeys.WINDSWEPT_HILLS),
+            Optional.of(BiomeKeys.WINDSWEPT_GRAVELLY_HILLS),
+            Optional.of(BiomeKeys.DESERT),
+            Optional.of(BiomeKeys.WINDSWEPT_FOREST),
+            Optional.of(BiomeKeys.WINDSWEPT_SAVANNA),
+            Optional.of(BiomeKeys.BADLANDS),
+            Optional.of(BiomeKeys.ERODED_BADLANDS),
+            Optional.of(BiomeKeys.MEADOW),
+            Optional.of(BiomeKeys.BEACH),
+            Optional.of(BiomeKeys.STONY_SHORE),
     });
 
     public static final TrackedData<String> VARIANT = DataTracker.registerData(RatEntity.class, TrackedDataHandlerRegistry.STRING);
 
-    private final AnimationFactory animationFactory = new AnimationFactory(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    public static final RawAnimation WALK_ANIM = RawAnimation.begin().thenPlay("animation.rat.walk");
+    public static final RawAnimation STILL_ANIM = RawAnimation.begin().thenPlay("animation.rat.still");
+
+    private int tickCounter = 0;
 
     public RatEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
@@ -79,7 +84,7 @@ public class RatEntity extends HostileEntity implements IAnimatable, IVariants<S
 
         counter = 1;
         this.targetSelector.add(counter++, (new RevengeGoal(this)).setGroupRevenge());
-        this.targetSelector.add(counter++, new FollowTargetGoal(this, PlayerEntity.class, true));
+        this.targetSelector.add(counter++, new ActiveTargetGoal(this, PlayerEntity.class, true));
     }
 
     public static DefaultAttributeContainer.Builder createRatAttributes() {
@@ -89,9 +94,18 @@ public class RatEntity extends HostileEntity implements IAnimatable, IVariants<S
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0D);
     }
 
+
     @Override
     public EntityGroup getGroup() {
         return RPGEntityGroup.BEAST;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (world.isClient)
+            tickCounter++;
     }
 
     @Override
@@ -99,23 +113,28 @@ public class RatEntity extends HostileEntity implements IAnimatable, IVariants<S
         return super.getEyeHeight(pose);
     }
 
-    private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (event.isMoving()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.walk", true));
+    private PlayState animationPredicate(AnimationState<RatEntity> animationState) {
+        if (animationState.isMoving()) {
+            animationState.getController().setAnimation(WALK_ANIM);
         } else {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.rat.still", true));
+            animationState.getController().setAnimation(STILL_ANIM);
         }
         return PlayState.CONTINUE;
     }
 
     @Override
-    public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::animationPredicate));
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return animationFactory;
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
+    }
+
+    @Override
+    public double getTick(Object o) {
+        return tickCounter;
     }
 
     @Override

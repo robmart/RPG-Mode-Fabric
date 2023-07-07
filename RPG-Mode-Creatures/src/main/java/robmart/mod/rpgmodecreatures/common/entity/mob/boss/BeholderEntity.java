@@ -17,21 +17,26 @@ import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldEvents;
 import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
-import robmart.mod.rpgmodecreatures.common.entity.ai.goal.FollowTargetHeightGoal;
 import robmart.mod.rpgmodecreatures.common.entity.projectile.EyeBeamProjectile;
 import robmart.mod.rpgmodecreatures.common.helper.RPGMathHelper;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
-import java.util.Random;
 
-public class BeholderEntity extends HostileEntity implements Monster, IAnimatable, RangedAttackMob {
-    private final AnimationFactory factory = new AnimationFactory(this);
+public class BeholderEntity extends HostileEntity implements Monster, GeoAnimatable, RangedAttackMob {
+
+    private int tickCounter = 0;
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     private final ServerBossBar bossBar;
 
@@ -49,9 +54,7 @@ public class BeholderEntity extends HostileEntity implements Monster, IAnimatabl
         this.goalSelector.add(5, new FlyRandomlyGoal(this));
         this.goalSelector.add(7, new LookAroundGoal(this));
 
-        this.targetSelector.add(1, new FollowTargetHeightGoal(this, PlayerEntity.class, true, false));
-        this.targetSelector.add(1, new FollowTargetHeightGoal(this, PigEntity.class, true, false));
-
+        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true, false));
     }
 
     public static DefaultAttributeContainer.Builder createBeholderAttributes() {
@@ -100,6 +103,14 @@ public class BeholderEntity extends HostileEntity implements Monster, IAnimatabl
         this.updateLimbs(this, false);
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (world.isClient)
+            tickCounter++;
+    }
+
     public boolean isClimbing() {
         return false;
     }
@@ -141,19 +152,29 @@ public class BeholderEntity extends HostileEntity implements Monster, IAnimatabl
 
 
     @Override
-    public void registerControllers(AnimationData animationData) {
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::animationPredicate));
+    }
+
+    private PlayState animationPredicate(AnimationState<BeholderEntity> animationState) {
+        return PlayState.CONTINUE;
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return factory;
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
+    }
+
+    @Override
+    public double getTick(Object o) {
+        return tickCounter;
     }
 
     @Override
     public void attack(LivingEntity target, float pullProgress) {
-        Random random = this.random;
+        net.minecraft.util.math.random.Random random = this.random;
         int eye = random.nextInt(10) + 1;
-        shootBeamAt(10, target);
+        shootBeamAt(eye, target);
     }
 
     private void shootBeamAt(int eyeIndex, LivingEntity target) {

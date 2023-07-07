@@ -19,6 +19,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -26,8 +27,8 @@ import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.tag.FluidTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -37,35 +38,38 @@ import net.minecraft.world.biome.BiomeKeys;
 import org.jetbrains.annotations.Nullable;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
-public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<String>, RangedAttackMob {
+public class NagaEntity extends HostileEntity implements GeoAnimatable, IVariants<String>, RangedAttackMob {
     public static List<Optional<BiomeKeys>> biomeList = List.of(new Optional[]{
             Optional.of(BiomeKeys.OCEAN),
             Optional.of(BiomeKeys.SWAMP),
+            Optional.of(BiomeKeys.MANGROVE_SWAMP),
             Optional.of(BiomeKeys.RIVER),
             Optional.of(BiomeKeys.FROZEN_OCEAN),
             Optional.of(BiomeKeys.FROZEN_RIVER),
             Optional.of(BiomeKeys.BEACH),
             Optional.of(BiomeKeys.DEEP_OCEAN),
-            Optional.of(BiomeKeys.STONE_SHORE),
+            Optional.of(BiomeKeys.STONY_SHORE),
             Optional.of(BiomeKeys.SNOWY_BEACH),
             Optional.of(BiomeKeys.WARM_OCEAN),
             Optional.of(BiomeKeys.LUKEWARM_OCEAN),
             Optional.of(BiomeKeys.COLD_OCEAN),
-            Optional.of(BiomeKeys.DEEP_WARM_OCEAN),
             Optional.of(BiomeKeys.DEEP_LUKEWARM_OCEAN),
             Optional.of(BiomeKeys.DEEP_COLD_OCEAN),
-            Optional.of(BiomeKeys.DEEP_FROZEN_OCEAN),
-            Optional.of(BiomeKeys.DESERT_LAKES),
+            Optional.of(BiomeKeys.DEEP_FROZEN_OCEAN)
     });
 
     public static final TrackedData<String> VARIANT = DataTracker.registerData(NagaEntity.class, TrackedDataHandlerRegistry.STRING);
@@ -78,8 +82,13 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
 
     boolean targetingUnderwater;
     int poseCounter = 100;
+    private int tickCounter = 0;
 
-    private final AnimationFactory animationFactory = new AnimationFactory(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    public static final RawAnimation BOW_ANIM = RawAnimation.begin().thenPlay("animation.naga.bow");
+    public static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenPlay("animation.naga.idle");
+    public static final RawAnimation IDLE_WATER_ANIM = RawAnimation.begin().thenPlay("animation.naga.idle_water");
+    public static final RawAnimation NONE_ANIM = RawAnimation.begin().thenPlay("animation.naga.none");
 
     static {
         POSE_DIMENSIONS = ImmutableMap.of(EntityPose.STANDING, EntityDimensions.changing(0.75f, 2.25f),
@@ -107,7 +116,7 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
 
         counter = 1;
         this.targetSelector.add(counter++, (new RevengeGoal(this)).setGroupRevenge());
-        this.targetSelector.add(counter, new FollowTargetGoal<>(this, PlayerEntity.class, true, false));
+        this.targetSelector.add(counter, new ActiveTargetGoal<>(this, PlayerEntity.class, true, false));
 
     }
 
@@ -117,7 +126,7 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D)
                 .add(EntityAttributes.GENERIC_ARMOR, 2D)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0D)
-        ;
+                ;
     }
 
     @Override
@@ -164,6 +173,9 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
         poseCounter--;
 
         updatePose();
+
+        if (world.isClient)
+            tickCounter++;
     }
 
     public void updatePose() {
@@ -202,26 +214,40 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
 
     }
 
-    private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (getAttack()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.naga.bow", true));
-            return PlayState.CONTINUE;
-        } else if (getPose() == EntityPose.STANDING && !getAttack())
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.naga.idle", true));
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "idleController", 0, this::idleAnimationPredicate));
+        controllers.add(new AnimationController<>(this, "controller", 0, this::animationPredicate));
+    }
+
+    private PlayState idleAnimationPredicate(AnimationState<NagaEntity> animationState) {
+        if (getPose() == EntityPose.STANDING)
+            animationState.getController().setAnimation(IDLE_ANIM);
         else
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.naga.idle_water", true));
+            animationState.getController().setAnimation(IDLE_WATER_ANIM);
+
+        return PlayState.CONTINUE;
+    }
+
+    private PlayState animationPredicate(AnimationState<NagaEntity> animationState) {
+        if (getAttack()) {
+            animationState.getController().setAnimation(BOW_ANIM);
+        } else if (animationState.getController().getAnimationState() != AnimationController.State.STOPPED) {
+            animationState.getController().setAnimation(NONE_ANIM);
+            animationState.getController().stop();
+        }
 
         return PlayState.CONTINUE;
     }
 
     @Override
-    public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return animationFactory;
+    public double getTick(Object o) {
+        return tickCounter;
     }
 
     @Override
@@ -237,13 +263,13 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
         int rand = this.random.nextInt(2);
         this.setVariant(rand == 0 ? "blue" : "green");
 
-        this.initEquipment(difficulty);
+        this.initEquipment(random, difficulty);
 
         return super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
     }
 
     @Override
-    protected void initEquipment(LocalDifficulty difficulty) {
+    protected void initEquipment(net.minecraft.util.math.random.Random random, LocalDifficulty difficulty) {
         if ((double)this.random.nextFloat() > 0.2D) {
             int i = this.random.nextInt(16);
             if (i < 5) {
@@ -257,13 +283,13 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
 
     }
 
-    public static boolean canSpawn(EntityType<NagaEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+    public static boolean canSpawn(EntityType<NagaEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, net.minecraft.util.math.random.Random random) {
         return world.getDifficulty() != Difficulty.PEACEFUL && isSpawnDark(world, pos, random) && (spawnReason == SpawnReason.SPAWNER || world.getFluidState(pos).isIn(FluidTags.WATER));
     }
 
     @Override
     public boolean canSpawn(WorldView world) {
-        return world.intersectsEntities(this);
+        return world.doesNotIntersectEntities(this);
     }
 
     private static boolean isValidSpawnDepth(WorldAccess world, BlockPos pos) {
@@ -377,6 +403,8 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
         return !this.isSwimming();
     }
 
+
+
     static class NagaMoveControl extends MoveControl {
         private final NagaEntity naga;
 
@@ -459,7 +487,7 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
 
         @Nullable
         private Vec3d getWanderTarget() {
-            Random random = this.mob.getRandom();
+            net.minecraft.util.math.random.Random random = this.mob.getRandom();
             BlockPos blockPos = this.mob.getBlockPos();
 
             for(int i = 0; i < 10; ++i) {
@@ -596,7 +624,7 @@ public class NagaEntity extends HostileEntity implements IAnimatable, IVariants<
 
         public void tick() {
             if (this.naga.getY() < (double)(this.minY - 1) && (this.naga.getNavigation().isIdle() || this.naga.hasFinishedCurrentPath())) {
-                Vec3d vec3d = NoPenaltyTargeting.find(this.naga, 4, 8, new Vec3d(this.naga.getX(), (double)(this.minY - 1), this.naga.getZ()), 1.5707963705062866D);
+                Vec3d vec3d = NoPenaltyTargeting.findTo(this.naga, 4, 8, new Vec3d(this.naga.getX(), (double)(this.minY - 1), this.naga.getZ()), 1.5707963705062866D);
                 if (vec3d == null) {
                     this.foundTarget = true;
                     return;
