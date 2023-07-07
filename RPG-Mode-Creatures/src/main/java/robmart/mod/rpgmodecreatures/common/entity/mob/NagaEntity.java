@@ -117,7 +117,6 @@ public class NagaEntity extends HostileEntity implements GeoAnimatable, IVariant
         counter = 1;
         this.targetSelector.add(counter++, (new RevengeGoal(this)).setGroupRevenge());
         this.targetSelector.add(counter, new ActiveTargetGoal<>(this, PlayerEntity.class, true, false));
-        this.targetSelector.add(counter++, new ActiveTargetGoal<>(this, PigEntity.class, true, false));
 
     }
 

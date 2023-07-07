@@ -55,8 +55,6 @@ public class BeholderEntity extends HostileEntity implements Monster, GeoAnimata
         this.goalSelector.add(7, new LookAroundGoal(this));
 
         this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true, false));
-        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PigEntity.class, true, false));
-
     }
 
     public static DefaultAttributeContainer.Builder createBeholderAttributes() {
@@ -176,7 +174,7 @@ public class BeholderEntity extends HostileEntity implements Monster, GeoAnimata
     public void attack(LivingEntity target, float pullProgress) {
         net.minecraft.util.math.random.Random random = this.random;
         int eye = random.nextInt(10) + 1;
-        shootBeamAt(10, target);
+        shootBeamAt(eye, target);
     }
 
     private void shootBeamAt(int eyeIndex, LivingEntity target) {
