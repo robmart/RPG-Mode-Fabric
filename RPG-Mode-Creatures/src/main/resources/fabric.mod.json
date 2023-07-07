@@ -22,7 +22,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.14.14",
-    "fabric-api": "*",
+    "fabric": "*",
     "minecraft": "1.19.3",
     "geckolib": ">=4.0.3",
     "rpgmode-core": "*",

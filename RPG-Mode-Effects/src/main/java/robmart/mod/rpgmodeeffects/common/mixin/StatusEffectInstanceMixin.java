@@ -1,51 +1,43 @@
 package robmart.mod.rpgmodeeffects.common.mixin;
 
+import com.mojang.serialization.Dynamic;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import robmart.mod.rpgmodecore.common.helper.DataHelper;
 import robmart.mod.rpgmodeeffects.common.entity.effect.IStatusEffectTarget;
 import robmart.mod.rpgmodeeffects.common.entity.effect.RPGStatusEffect;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(StatusEffectInstance.class)
 public class StatusEffectInstanceMixin implements IStatusEffectTarget {
+    @Unique
     private Entity attacker;
+    @Unique
     private Entity target;
+    @Unique
     private UUID attackerUUID = null;
+    @Unique
     private UUID targetUUID = null;
 
-    //TODO: Use inject instead, for compatibility
-    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;fromNbt(Lnet/minecraft/entity/effect/StatusEffect;Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/entity/effect/StatusEffectInstance;"), method = "fromNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/entity/effect/StatusEffectInstance;")
-    private static StatusEffectInstance fromNbt(StatusEffect type, NbtCompound nbt) {
-        int i = nbt.getByte("Amplifier");
-        int j = nbt.getInt("Duration");
-        boolean bl = nbt.getBoolean("Ambient");
-        boolean bl2 = true;
-        if (nbt.contains("ShowParticles", 1)) {
-            bl2 = nbt.getBoolean("ShowParticles");
-        }
-
-        boolean bl3 = bl2;
-        if (nbt.contains("ShowIcon", 1)) {
-            bl3 = nbt.getBoolean("ShowIcon");
-        }
-
-        StatusEffectInstance statusEffectInstance = null;
-        if (nbt.contains("HiddenEffect", 10)) {
-            statusEffectInstance = fromNbt(type, nbt.getCompound("HiddenEffect"));
-        }
-
+    @Inject(at = @At(value = "TAIL"), method = "fromNbt(Lnet/minecraft/entity/effect/StatusEffect;Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/entity/effect/StatusEffectInstance;", locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+    private static void fromNbt(StatusEffect type, NbtCompound nbt, CallbackInfoReturnable<StatusEffectInstance> cir, int i, int j, boolean bl, boolean bl2, boolean bl3, StatusEffectInstance statusEffectInstance, Optional optional) {
         if (type instanceof RPGStatusEffect rpgStatusEffect && rpgStatusEffect.needsTarget()) {
-            StatusEffectInstance instance = new StatusEffectInstance(type, j, Math.max(i, 0), bl, bl2, bl3, statusEffectInstance);
+            StatusEffectInstance instance = new StatusEffectInstance(type, j, Math.max(i, 0), bl, bl2, bl3, statusEffectInstance, optional);
 
             if (nbt.containsUuid("AttackerUUID")) {
                 Entity attacker = DataHelper.entityFromUUID(nbt.getUuid("AttackerUUID"));
@@ -67,10 +59,8 @@ public class StatusEffectInstanceMixin implements IStatusEffectTarget {
                 }
             }
 
-            return instance;
+            cir.setReturnValue(instance);
         }
-
-        return new StatusEffectInstance(type, j, Math.max(i, 0), bl, bl2, bl3, statusEffectInstance);
     }
 
     @Inject(method = "update", at = @At("TAIL"))

@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public class NagaEntity extends HostileEntity implements GeoAnimatable, IVariants, RangedAttackMob {
+public class NagaEntity extends HostileEntity implements GeoAnimatable, IVariants<String>, RangedAttackMob {
     public static List<Optional<BiomeKeys>> biomeList = List.of(new Optional[]{
             Optional.of(BiomeKeys.OCEAN),
             Optional.of(BiomeKeys.SWAMP),

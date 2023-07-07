@@ -28,7 +28,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.Optional;
 
-public class RatEntity extends HostileEntity implements GeoAnimatable, IVariants {
+public class RatEntity extends HostileEntity implements GeoAnimatable, IVariants<String> {
     public static List<Optional<BiomeKeys>> biomeList = List.of(new Optional[]{
             Optional.of(BiomeKeys.PLAINS),
             Optional.of(BiomeKeys.FOREST),

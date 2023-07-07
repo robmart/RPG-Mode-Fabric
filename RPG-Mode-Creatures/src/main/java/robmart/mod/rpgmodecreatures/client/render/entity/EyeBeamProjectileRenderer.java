@@ -9,9 +9,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import robmart.mod.rpgmodecreatures.client.render.entity.model.EyeBeamProjectileModel;
 import robmart.mod.rpgmodecreatures.common.entity.projectile.EyeBeamProjectile;
-import software.bernie.geckolib3.renderers.geo.GeoProjectilesRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-public class EyeBeamProjectileRenderer extends GeoProjectilesRenderer<EyeBeamProjectile> {
+public class EyeBeamProjectileRenderer extends GeoEntityRenderer<EyeBeamProjectile> {
+
     public EyeBeamProjectileRenderer(EntityRendererFactory.Context ctx) {
         super(ctx, new EyeBeamProjectileModel());
     }
@@ -20,10 +21,10 @@ public class EyeBeamProjectileRenderer extends GeoProjectilesRenderer<EyeBeamPro
         return 15;
     }
 
-    @Override
-    public RenderLayer getRenderType(EyeBeamProjectile animatable, float partialTicks, MatrixStack stack,
-                                     VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-                                     Identifier textureLocation) {
-        return RenderLayer.getEntityTranslucent(getTextureLocation(animatable));
-    }
+//    @Override
+//    public RenderLayer getRenderType(EyeBeamProjectile animatable, float partialTicks, MatrixStack stack,
+//                                     VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+//                                     Identifier textureLocation) {
+//        return RenderLayer.getEntityTranslucent(getTextureLocation(animatable));
+//    }
 }
