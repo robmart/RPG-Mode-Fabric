@@ -4,16 +4,19 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeKeys;
+import robmart.mod.rpgmodecreatures.common.sound.RPGModeCreaturesSounds;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -171,5 +174,20 @@ public class RatEntity extends HostileEntity implements GeoAnimatable, IVariants
     @Override
     public String getVariant() {
         return this.dataTracker.get(VARIANT);
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return RPGModeCreaturesSounds.RAT_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return RPGModeCreaturesSounds.RAT_DEATH;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return RPGModeCreaturesSounds.RAT_AMBIENT;
     }
 }
