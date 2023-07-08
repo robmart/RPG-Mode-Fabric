@@ -16,7 +16,7 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeKeys;
-import robmart.mod.rpgmodecreatures.common.sound.RPGModeCreaturesSounds;
+import robmart.mod.rpgmodecreatures.common.sound.RPGCreaturesSounds;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -178,16 +178,16 @@ public class RatEntity extends HostileEntity implements GeoAnimatable, IVariants
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return RPGModeCreaturesSounds.RAT_HURT;
+        return RPGCreaturesSounds.RAT_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return RPGModeCreaturesSounds.RAT_DEATH;
+        return RPGCreaturesSounds.RAT_DEATH;
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return RPGModeCreaturesSounds.RAT_AMBIENT;
+        return RPGCreaturesSounds.RAT_AMBIENT;
     }
 }

@@ -20,7 +20,6 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -40,7 +39,7 @@ import net.minecraft.world.biome.BiomeKeys;
 import org.jetbrains.annotations.Nullable;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
-import robmart.mod.rpgmodecreatures.common.sound.RPGModeCreaturesSounds;
+import robmart.mod.rpgmodecreatures.common.sound.RPGCreaturesSounds;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -53,7 +52,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 public class NagaEntity extends HostileEntity implements GeoAnimatable, IVariants<String>, RangedAttackMob {
     public static List<Optional<BiomeKeys>> biomeList = List.of(new Optional[]{
@@ -408,17 +406,17 @@ public class NagaEntity extends HostileEntity implements GeoAnimatable, IVariant
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return RPGModeCreaturesSounds.NAGA_HURT;
+        return RPGCreaturesSounds.NAGA_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return RPGModeCreaturesSounds.NAGA_DEATH;
+        return RPGCreaturesSounds.NAGA_DEATH;
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return RPGModeCreaturesSounds.NAGA_AMBIENT;
+        return RPGCreaturesSounds.NAGA_AMBIENT;
     }
 
     static class NagaMoveControl extends MoveControl {

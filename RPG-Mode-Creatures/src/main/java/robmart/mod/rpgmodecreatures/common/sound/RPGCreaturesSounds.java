@@ -6,7 +6,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import robmart.mod.rpgmodecore.common.reference.Reference;
 
-public class RPGModeCreaturesSounds {
+public class RPGCreaturesSounds {
     public static SoundEvent RAT_HURT;
     public static SoundEvent RAT_DEATH;
     public static SoundEvent RAT_AMBIENT;

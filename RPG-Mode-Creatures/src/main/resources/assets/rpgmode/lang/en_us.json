@@ -2,5 +2,7 @@
   "entity.rpgmode.rat": "Rat",
   "entity.rpgmode.naga": "Naga",
   "entity.rpgmode.beholder": "Beholder",
-  "entity.rpgmode.beholder_eye_beam": "Eye Beam"
+  "entity.rpgmode.beholder_eye_beam": "Eye Beam",
+  "item.rpgmode.rat_spawn_egg": "Rat Spawn Egg",
+  "item.rpgmode.naga_spawn_egg": "Naga Spawn Egg"
 }
