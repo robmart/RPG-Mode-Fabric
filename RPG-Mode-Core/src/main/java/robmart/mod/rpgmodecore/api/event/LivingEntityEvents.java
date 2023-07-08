@@ -40,7 +40,7 @@ public class LivingEntityEvents {
         /**
          * Checks whether an entity can jump.
          *
-         * @param entity      the jumping entity
+         * @param entity the jumping entity
          * @return Upon return:
          * - SUCCESS cancels further processing and continues with normal jumping behavior.
          * - PASS falls back to further processing and defaults to SUCCESS if no other listeners are available
@@ -54,6 +54,14 @@ public class LivingEntityEvents {
     @FunctionalInterface
     public interface Damage {
         /**
+         * Checks whether an entity can take damage.
+         *
+         * @param receiver the entity taking damage
+         * @param source the damage source
+         * @return Upon return:
+         * - SUCCESS cancels further processing and continues with normal damage behavior.
+         * - PASS falls back to further processing and defaults to SUCCESS if no other listeners are available
+         * - FAIL cancels further processing and does not take damage.
          * @see LivingEntity#applyDamage(DamageSource, float)
          */
         @Nullable
