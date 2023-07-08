@@ -38,36 +38,34 @@
   "rpgmode.naga.hurt": {
     "sounds": [
       {
-        "name": "rpgmode:rat/hurt1"
+        "name": "rpgmode:naga/hurt1"
       },
       {
-        "name": "rpgmode:rat/hurt2"
+        "name": "rpgmode:naga/hurt2"
       },
       {
-        "name": "rpgmode:rat/hurt3"
+        "name": "rpgmode:naga/hurt3"
       }
     ]
   },
   "rpgmode.naga.death": {
     "sounds": [
       {
-        "name": "rpgmode:rat/death"
+        "name": "rpgmode:naga/death",
+        "volume": 0.8
       }
     ]
   },
   "rpgmode.naga.ambient": {
     "sounds": [
       {
-        "name": "rpgmode:rat/hurt1",
-        "volume": 0.2
+        "name": "rpgmode:naga/hurt1"
       },
       {
-        "name": "rpgmode:rat/hurt2",
-        "volume": 0.2
+        "name": "rpgmode:naga/hurt2"
       },
       {
-        "name": "rpgmode:rat/hurt3",
-        "volume": 0.2
+        "name": "rpgmode:naga/hurt3"
       }
     ]
   }
