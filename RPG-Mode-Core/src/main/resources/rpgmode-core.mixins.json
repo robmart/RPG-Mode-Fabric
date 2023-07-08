@@ -4,6 +4,7 @@
   "package": "robmart.mod.rpgmodecore.common.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BrewingRecipeRegistryMixin",
     "LivingEntityMixin"
   ],
   "client": [
