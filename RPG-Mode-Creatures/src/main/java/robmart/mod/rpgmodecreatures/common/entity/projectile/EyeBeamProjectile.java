@@ -21,8 +21,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import robmart.mod.rpgmodecreatures.common.RPGModeCreatures;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
+import robmart.mod.rpgmodecreatures.common.entity.RPGCreaturesEntityTypes;
 import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
 import robmart.mod.rpgmodeeffects.common.entity.effect.RPGEffectsStatusEffects;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -48,7 +48,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements GeoA
     }
 
     public EyeBeamProjectile(World world, MobEntity owner, double directionX, double directionY, double directionZ) {
-        super(RPGModeCreatures.BEHOLDER_EYE_BEAM, owner, directionX, directionY, directionZ, world);
+        super(RPGCreaturesEntityTypes.BEHOLDER_EYE_BEAM, owner, directionX, directionY, directionZ, world);
     }
 
     @Override
