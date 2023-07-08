@@ -12,6 +12,7 @@ import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
@@ -92,17 +93,20 @@ public class NagaEntityRenderer extends GeoEntityRenderer<NagaEntity> {
     protected void renderItem(GeoBone bone, LivingEntity entity, ItemStack stack, ModelTransformation.Mode transformationMode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         if (!stack.isEmpty()) {
             matrices.push();
-            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(75));
-            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
-            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(0));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0F));
 
-            matrices.translate(-0.325D, -0.3D, 1.65D);
+            matrices.translate(0.475D, 0.1D, 1.05D);
+            if (!stack.getItem().equals(Items.BOW))
+                matrices.translate(-0.1D, 0D, 0D);
 
             matrices.translate(bone.getPosX(), bone.getPosZ(), bone.getPosY());
             matrices.multiply(new Quaternionf(-bone.getRotX(), -bone.getRotZ(), bone.getRotY(), 1));
 
             boolean bl = arm == Arm.LEFT;
-            matrices.translate((float)(bl ? 0.7 : 0), 0.125F, -0.625F + (float)(bl ? 0.05 : 0));
+            matrices.translate((float)(bl ? -0.95 : 0), 0, (bl ? 0.025 : 0));
+            if (!stack.getItem().equals(Items.BOW))
+                matrices.translate((float)(bl ? 0.2 : 0), 0, (bl ? 0.025 : 0));
             MinecraftClient.getInstance().gameRenderer.firstPersonRenderer.renderItem(entity, stack, transformationMode, bl, matrices, vertexConsumers, light);
             matrices.pop();
         }
