@@ -20,14 +20,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 import robmart.mod.rpgmodecreatures.common.RPGModeCreatures;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
-import robmart.mod.rpgmodecreatures.common.entity.mob.RatEntity;
-import robmart.mod.rpgmodeeffects.common.entity.effect.RPGStatusEffects;
+import robmart.mod.rpgmodeeffects.common.entity.effect.RPGEffectsStatusEffects;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -151,7 +148,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements GeoA
                         if (entity == this.getOwner()) return;
 
                         LivingEntity livingEntity = (LivingEntity) entity;
-                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.CHARM, 20 * finalI / 2), this.getEffectCause());
+                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGEffectsStatusEffects.CHARM, 20 * finalI / 2), this.getEffectCause());
                     });
                     break;
                 case 2: //Nausea
@@ -221,7 +218,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements GeoA
                         if (entity == this.getOwner()) return;
 
                         LivingEntity livingEntity = (LivingEntity) entity;
-                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.SLEEP, 20 * finalI6 * 2, 1), this.getEffectCause());
+                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGEffectsStatusEffects.SLEEP, 20 * finalI6 * 2, 1), this.getEffectCause());
                     });
                     break;
                 case 8: //Petrification
@@ -231,7 +228,7 @@ public class EyeBeamProjectile extends ExplosiveProjectileEntity implements GeoA
                         if (entity == this.getOwner()) return;
 
                         LivingEntity livingEntity = (LivingEntity) entity;
-                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGStatusEffects.PETRIFICATION, 20 * finalI7 / 4, 1), this.getEffectCause());
+                        livingEntity.addStatusEffect(new StatusEffectInstance(RPGEffectsStatusEffects.PETRIFICATION, 20 * finalI7 / 4, 1), this.getEffectCause());
                     });
                     break;
                 case 9: //Disintegration

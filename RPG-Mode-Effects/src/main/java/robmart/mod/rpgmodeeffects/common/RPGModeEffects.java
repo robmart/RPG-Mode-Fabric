@@ -7,16 +7,18 @@ import net.minecraft.util.ActionResult;
 import robmart.mod.rpgmodecore.api.event.LivingEntityEvents;
 import robmart.mod.rpgmodeeffects.common.entity.effect.CharmStatusEffect;
 import robmart.mod.rpgmodeeffects.common.entity.effect.IStatusEffectTarget;
-import robmart.mod.rpgmodeeffects.common.entity.effect.RPGStatusEffects;
+import robmart.mod.rpgmodeeffects.common.entity.effect.RPGEffectsStatusEffects;
 import robmart.mod.rpgmodeeffects.common.entity.effect.SleepStatusEffect;
+import robmart.mod.rpgmodeeffects.common.potion.RPGEffectPotions;
 
 public class RPGModeEffects implements ModInitializer {
     @Override
     public void onInitialize() {
-        RPGStatusEffects.register();
+        RPGEffectsStatusEffects.initialize();
+        RPGEffectPotions.initialize();
 
         LivingEntityEvents.JUMPING_EVENT.register((entity -> {
-            if (entity.hasStatusEffect(RPGStatusEffects.PETRIFICATION) || entity.hasStatusEffect(RPGStatusEffects.SLEEP)) {
+            if (entity.hasStatusEffect(RPGEffectsStatusEffects.PETRIFICATION) || entity.hasStatusEffect(RPGEffectsStatusEffects.SLEEP)) {
                 return ActionResult.FAIL;
             }
 
@@ -26,7 +28,7 @@ public class RPGModeEffects implements ModInitializer {
         LivingEntityEvents.DAMAGE_EVENT.register((target, source, amount) -> {
             LivingEntity attacker = (LivingEntity) source.getAttacker();
 
-            if (attacker != null && attacker.hasStatusEffect(RPGStatusEffects.CHARM)) { //Charm target can't attack source
+            if (attacker != null && attacker.hasStatusEffect(RPGEffectsStatusEffects.CHARM)) { //Charm target can't attack source
                 for (StatusEffectInstance instance : attacker.getStatusEffects()){
                     if (instance.getEffectType() instanceof CharmStatusEffect) {
                         if (((IStatusEffectTarget) instance).getTarget() == attacker) {
@@ -36,21 +38,21 @@ public class RPGModeEffects implements ModInitializer {
                 }
             }
 
-            if (attacker != null && target.hasStatusEffect(RPGStatusEffects.CHARM)) { //Charm removed if target is attacked by source
+            if (attacker != null && target.hasStatusEffect(RPGEffectsStatusEffects.CHARM)) { //Charm removed if target is attacked by source
                 for (StatusEffectInstance instance : target.getStatusEffects()){
                     if (instance.getEffectType() instanceof CharmStatusEffect) {
                         if (((IStatusEffectTarget) instance).getAttacker() == attacker) {
-                            target.removeStatusEffect(RPGStatusEffects.CHARM);
+                            target.removeStatusEffect(RPGEffectsStatusEffects.CHARM);
                             return ActionResult.PASS;
                         }
                     }
                 }
             }
 
-            if (target.hasStatusEffect(RPGStatusEffects.SLEEP)) { //Sleep removed when taking damage
+            if (target.hasStatusEffect(RPGEffectsStatusEffects.SLEEP)) { //Sleep removed when taking damage
                 for (StatusEffectInstance instance : target.getStatusEffects()){
                     if (instance.getEffectType() instanceof SleepStatusEffect) {
-                        target.removeStatusEffect(RPGStatusEffects.SLEEP);
+                        target.removeStatusEffect(RPGEffectsStatusEffects.SLEEP);
                         return ActionResult.PASS;
                     }
                 }

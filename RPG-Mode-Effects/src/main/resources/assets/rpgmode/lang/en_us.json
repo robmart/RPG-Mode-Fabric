@@ -1,6 +1,18 @@
 {
   "effect.rpgmode.petrification": "Petrification",
   "effect.rpgmode.charm": "Charm",
-  "effect.rpgmode.sleep": "Sleep"
+  "effect.rpgmode.sleep": "Sleep",
+  "item.minecraft.potion.effect.petrification": "Potion of Petrification",
+  "item.minecraft.potion.effect.charm": "Potion of Charm",
+  "item.minecraft.potion.effect.sleep": "Potion of Sleeping",
+  "item.minecraft.splash_potion.effect.petrification": "Splash Potion of Petrification",
+  "item.minecraft.splash_potion.effect.charm": "Splash Potion of Charm",
+  "item.minecraft.splash_potion.effect.sleep": "Splash Potion of Sleeping",
+  "item.minecraft.lingering_potion.effect.petrification": "Lingering Potion of Petrification",
+  "item.minecraft.lingering_potion.effect.charm": "Lingering Potion of Charm",
+  "item.minecraft.lingering_potion.effect.sleep": "Lingering Potion of Sleeping",
+  "item.minecraft.tipped_arrow.effect.petrification": "Arrow of Petrification",
+  "item.minecraft.tipped_arrow.effect.charm": "Arrow of Charm",
+  "item.minecraft.tipped_arrow.effect.sleep": "Arrow of Sleeping"
 }
 
