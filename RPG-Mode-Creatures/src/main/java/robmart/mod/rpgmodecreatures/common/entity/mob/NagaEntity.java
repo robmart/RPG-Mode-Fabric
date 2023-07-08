@@ -14,6 +14,7 @@ import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.ai.pathing.SwimNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -28,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -38,6 +40,7 @@ import net.minecraft.world.biome.BiomeKeys;
 import org.jetbrains.annotations.Nullable;
 import robmart.mod.rpgmodecreatures.common.entity.IVariants;
 import robmart.mod.rpgmodecreatures.common.entity.RPGEntityGroup;
+import robmart.mod.rpgmodecreatures.common.sound.RPGModeCreaturesSounds;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -403,7 +406,20 @@ public class NagaEntity extends HostileEntity implements GeoAnimatable, IVariant
         return !this.isSwimming();
     }
 
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return RPGModeCreaturesSounds.NAGA_HURT;
+    }
 
+    @Override
+    protected SoundEvent getDeathSound() {
+        return RPGModeCreaturesSounds.NAGA_DEATH;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return RPGModeCreaturesSounds.NAGA_AMBIENT;
+    }
 
     static class NagaMoveControl extends MoveControl {
         private final NagaEntity naga;

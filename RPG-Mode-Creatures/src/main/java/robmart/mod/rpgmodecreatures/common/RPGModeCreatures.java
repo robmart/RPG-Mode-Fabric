@@ -16,6 +16,7 @@ import robmart.mod.rpgmodecreatures.common.entity.mob.NagaEntity;
 import robmart.mod.rpgmodecreatures.common.entity.mob.RatEntity;
 import robmart.mod.rpgmodecreatures.common.entity.mob.boss.BeholderEntity;
 import robmart.mod.rpgmodecreatures.common.entity.projectile.EyeBeamProjectile;
+import robmart.mod.rpgmodecreatures.common.sound.RPGModeCreaturesSounds;
 import software.bernie.geckolib.GeckoLib;
 
 import java.util.Optional;
@@ -65,5 +66,7 @@ public class RPGModeCreatures implements ModInitializer {
 
         BiomeModifications.addSpawn(BiomeSelectors.all().and(context -> NagaEntity.biomeList.contains(Optional.of(context.getBiomeKey()))),
                 SpawnGroup.MONSTER, NAGA, 25, 1, 2);
+
+        RPGModeCreaturesSounds.initialize();
     }
 }

@@ -1,0 +1,72 @@
+{
+  "rpgmode.rat.hurt": {
+    "sounds": [
+      {
+        "name": "rpgmode:rat/hurt1"
+      },
+      {
+        "name": "rpgmode:rat/hurt2"
+      },
+      {
+        "name": "rpgmode:rat/hurt3"
+      }
+    ]
+  },
+  "rpgmode.rat.death": {
+    "sounds": [
+      {
+        "name": "rpgmode:rat/death"
+      }
+    ]
+  },
+  "rpgmode.rat.ambient": {
+    "sounds": [
+      {
+        "name": "rpgmode:rat/hurt1",
+        "volume": 0.2
+      },
+      {
+        "name": "rpgmode:rat/hurt2",
+        "volume": 0.2
+      },
+      {
+        "name": "rpgmode:rat/hurt3",
+        "volume": 0.2
+      }
+    ]
+  },
+  "rpgmode.naga.hurt": {
+    "sounds": [
+      {
+        "name": "rpgmode:naga/hurt1"
+      },
+      {
+        "name": "rpgmode:naga/hurt2"
+      },
+      {
+        "name": "rpgmode:naga/hurt3"
+      }
+    ]
+  },
+  "rpgmode.naga.death": {
+    "sounds": [
+      {
+        "name": "rpgmode:naga/death",
+        "volume": 0.8
+      }
+    ]
+  },
+  "rpgmode.naga.ambient": {
+    "sounds": [
+      {
+        "name": "rpgmode:naga/hurt1"
+      },
+      {
+        "name": "rpgmode:naga/hurt2"
+      },
+      {
+        "name": "rpgmode:naga/hurt3"
+      }
+    ]
+  }
+}
